@@ -1,0 +1,52 @@
+package com.example.practicerabu
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.practicerabu.ui.screen.BookingScreen
+import com.example.practicerabu.ui.screen.latihanView
+import com.example.practicerabu.ui.theme.PracticerabuTheme
+import com.example.practicerabu.viewmodel.LatihanViewModel
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            PracticerabuTheme {
+
+                val viewModel: LatihanViewModel = viewModel()
+                val isFormOpen by viewModel.isFormOpen.collectAsState()
+
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(
+                        Modifier.padding(innerPadding)
+                    ) {
+                            if (isFormOpen) {
+                                BackHandler{ viewModel.closeForm() }
+                                BookingScreen(
+                                    onSubmit = viewModel::addBookingList,
+                                    onCancel = viewModel::closeForm
+                                )
+                            } else {
+                                latihanView()
+                            }
+                        }
+                }
+            }
+        }
+    }
+}
